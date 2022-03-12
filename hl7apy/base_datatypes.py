@@ -40,8 +40,13 @@ from decimal import Decimal
 from functools import cmp_to_key
 
 from hl7apy import get_default_encoding_chars, get_default_validation_level
-from hl7apy.exceptions import MaxLengthReached, InvalidHighlightRange, InvalidDateFormat, \
-    InvalidDateOffset, InvalidMicrosecondsPrecision
+from hl7apy.exceptions import (
+    MaxLengthReached,
+    InvalidHighlightRange,
+    InvalidDateFormat,
+    InvalidDateOffset,
+    InvalidMicrosecondsPrecision,
+)
 from hl7apy.validation import Validator
 
 
@@ -65,13 +70,17 @@ class BaseDataType(object):
         greater than the :attr:`max_length`. Only if :attr:`validation_level` is
         :attr:`STRICT <VALIDATION_LEVEL.STRICT>`
     """
+
     def __init__(self, value, max_length=None, validation_level=None):
         if validation_level is None:
             validation_level = get_default_validation_level()
         self.validation_level = validation_level
         self.max_length = max_length
         if Validator.is_strict(self.validation_level):
-            if self.max_length is not None and len('{0}'.format(value)) > self.max_length:
+            if (
+                self.max_length is not None
+                and len("{0}".format(value)) > self.max_length
+            ):
                 raise MaxLengthReached(value, self.max_length)
         self.value = value
 
@@ -79,7 +88,7 @@ class BaseDataType(object):
         """
         Encode to ER7 format
         """
-        return '{0}'.format(self.value if self.value is not None else '')
+        return "{0}".format(self.value if self.value is not None else "")
 
     @property
     def classname(self):
@@ -113,11 +122,10 @@ class TextualDataType(BaseDataType):
     :raise: :exc:`MaxLengthReached <hl7apy.exceptions.MaxLengthReached>` When the :attr:`value`'s length is
         greater than :attr:`max_length`
     """
-    def __init__(self, value, max_length=32, highlights=None,
-                 validation_level=None):
+
+    def __init__(self, value, max_length=32, highlights=None, validation_level=None):
         self.highlights = highlights
-        super(TextualDataType, self).__init__(value, max_length,
-                                              validation_level)
+        super(TextualDataType, self).__init__(value, max_length, validation_level)
 
     def to_er7(self, encoding_chars=None):
         if encoding_chars is None:
@@ -125,21 +133,26 @@ class TextualDataType(BaseDataType):
         return self._escape_value(self.value, encoding_chars)
 
     def _get_translations(self, encoding_chars):
-        escape_char = encoding_chars['ESCAPE']
-        return ((encoding_chars['FIELD'], '{esc}F{esc}'.format(esc=escape_char)),
-                (encoding_chars['COMPONENT'], '{esc}S{esc}'.format(esc=escape_char)),
-                (encoding_chars['SUBCOMPONENT'], '{esc}T{esc}'.format(esc=escape_char)),
-                (encoding_chars['REPETITION'], '{esc}R{esc}'.format(esc=escape_char)),)
+        escape_char = encoding_chars["ESCAPE"]
+        return (
+            (encoding_chars["FIELD"], "{esc}F{esc}".format(esc=escape_char)),
+            (encoding_chars["COMPONENT"], "{esc}S{esc}".format(esc=escape_char)),
+            (encoding_chars["SUBCOMPONENT"], "{esc}T{esc}".format(esc=escape_char)),
+            (encoding_chars["REPETITION"], "{esc}R{esc}".format(esc=escape_char)),
+        )
 
     def _get_escape_char_regex(self, escape_char):
-        return r'(?<!%s[HNFSTRE])%s(?![HNFSTRE]%s)' % tuple(3*[re.escape(escape_char)])
+        return r"(?<!%s[HNFSTRE])%s(?![HNFSTRE]%s)" % tuple(
+            3 * [re.escape(escape_char)]
+        )
 
     def _escape_value(self, value, encoding_chars=None):
-        escape_char = encoding_chars['ESCAPE']
+        escape_char = encoding_chars["ESCAPE"]
         translations = self._get_translations(encoding_chars)
 
         # Inserts the highlights escape sequences
         if self.highlights is not None:
+
             def _sort_highlights(x, y):
                 if x[0] < y[0]:
                     if y[0] < x[1]:  # overlapping ranges
@@ -160,10 +173,10 @@ class TextualDataType(BaseDataType):
             for hl in self.highlights:
                 if hl[0] > hl[1]:
                     raise InvalidHighlightRange(hl[0], hl[1])
-                words.insert(hl[0] + offset, '{esc}H{esc}'.format(esc=escape_char))
-                words.insert(hl[1] + offset + 1, '{esc}N{esc}'.format(esc=escape_char))
+                words.insert(hl[0] + offset, "{esc}H{esc}".format(esc=escape_char))
+                words.insert(hl[1] + offset + 1, "{esc}N{esc}".format(esc=escape_char))
                 offset += 2
-            value = ''.join(words)
+            value = "".join(words)
 
         # Escapes encoding_chars
         for char, esc_seq in translations:
@@ -174,8 +187,11 @@ class TextualDataType(BaseDataType):
         # Thus the regex search for escape chars not followed and not preceeded by one of the litteral
         # composing an escape sequence. We use lambda because otherwise the backslash sequence in the string
         # is processed (look for re.sub in python doc) and we don't want this
-        value = re.sub(self._get_escape_char_regex(escape_char),
-                       lambda x: '{esc}E{esc}'.format(esc=escape_char), value)
+        value = re.sub(
+            self._get_escape_char_regex(escape_char),
+            lambda x: "{esc}E{esc}".format(esc=escape_char),
+            value,
+        )
 
         return value
 
@@ -196,10 +212,9 @@ class NumericDataType(BaseDataType):
     :raise: :exc:`hl7apy.exceptions.MaxLengthReached` When the `value`'s length is greater than `max_length`
 
     """
-    def __init__(self, value=None, max_length=16,
-                 validation_level=None):
-        super(NumericDataType, self).__init__(value, max_length,
-                                              validation_level)
+
+    def __init__(self, value=None, max_length=16, validation_level=None):
+        super(NumericDataType, self).__init__(value, max_length, validation_level)
 
 
 class DateTimeDataType(BaseDataType):
@@ -221,7 +236,7 @@ class DateTimeDataType(BaseDataType):
 
     allowed_formats = ()
 
-    def __init__(self, value=None, out_format=''):
+    def __init__(self, value=None, out_format=""):
         if out_format not in self.allowed_formats:
             raise InvalidDateFormat(out_format)
         self.value = value
@@ -238,8 +253,8 @@ class WD(TextualDataType):
 
     :attr:`max_length` is 0
     """
-    def __init__(self, value, highlights=None,
-                 validation_level=None):
+
+    def __init__(self, value, highlights=None, validation_level=None):
         super(WD, self).__init__(value, 199, highlights, validation_level)
 
 
@@ -251,9 +266,9 @@ class DT(DateTimeDataType):
     The :attr:`allowed_formats` tuple is ``('%Y', '%Y%m', '%Y%m%d')``
     """
 
-    allowed_formats = ('%Y', '%Y%m', '%Y%m%d')
+    allowed_formats = ("%Y", "%Y%m", "%Y%m%d")
 
-    def __init__(self, value=None, out_format='%Y%m%d'):
+    def __init__(self, value=None, out_format="%Y%m%d"):
         super(DT, self).__init__(value, out_format)
 
 
@@ -275,9 +290,11 @@ class TM(DateTimeDataType):
         It must be between 1 and 4
     """
 
-    allowed_formats = ('%H', '%H%M', '%H%M%S', '%H%M%S.%f')
+    allowed_formats = ("%H", "%H%M", "%H%M%S", "%H%M%S.%f")
 
-    def __init__(self, value=None, out_format='%H%M%S.%f', offset='', microsec_precision=4):
+    def __init__(
+        self, value=None, out_format="%H%M%S.%f", offset="", microsec_precision=4
+    ):
         super(TM, self).__init__(value, out_format)
 
         if not (1 <= microsec_precision <= 4):
@@ -288,24 +305,24 @@ class TM(DateTimeDataType):
         if offset and len(offset) != 5:
             raise InvalidDateOffset(offset)
         try:
-            d = datetime.strptime(offset[1:], '%H%M')
-            if offset[0] == '+' and d.hour > 14 or offset[0] == '-' and d.hour > 12:
+            d = datetime.strptime(offset[1:], "%H%M")
+            if offset[0] == "+" and d.hour > 14 or offset[0] == "-" and d.hour > 12:
                 raise ValueError
         except ValueError:
             if offset:
                 raise InvalidDateOffset(offset)
 
-        if offset and offset[0] not in ('+', '-'):
+        if offset and offset[0] not in ("+", "-"):
             raise InvalidDateOffset(offset)
 
         self.offset = offset
 
     def to_er7(self, encoding_chars=None):
         date_value = super(TM, self).to_er7()
-        if self.format.find('%f') != -1:
+        if self.format.find("%f") != -1:
             index = 6 - self.microsec_precision
             date_value = date_value[:-index]
-        return '{0}{1}'.format(date_value, self.offset)
+        return "{0}{1}".format(date_value, self.offset)
 
 
 class DTM(TM):
@@ -318,10 +335,19 @@ class DTM(TM):
     ``('%Y', '%Y%m', '%Y%m%d', '%Y%m%d%H', '%Y%m%d%H%M', '%Y%m%d%H%M%S', '%Y%m%d%H%M%S.%f')``
     """
 
-    allowed_formats = ('%Y', '%Y%m', '%Y%m%d', '%Y%m%d%H', '%Y%m%d%H%M',
-                       '%Y%m%d%H%M%S', '%Y%m%d%H%M%S.%f')
+    allowed_formats = (
+        "%Y",
+        "%Y%m",
+        "%Y%m%d",
+        "%Y%m%d%H",
+        "%Y%m%d%H%M",
+        "%Y%m%d%H%M%S",
+        "%Y%m%d%H%M%S.%f",
+    )
 
-    def __init__(self, value=None, out_format='%Y%m%d%H%M%S.%f', offset='', microsec_precision=4):
+    def __init__(
+        self, value=None, out_format="%Y%m%d%H%M%S.%f", offset="", microsec_precision=4
+    ):
         super(DTM, self).__init__(value, out_format, offset, microsec_precision)
 
 
@@ -332,8 +358,8 @@ class ST(TextualDataType):
 
     :attr:`max_length` is 199
     """
-    def __init__(self, value, highlights=None,
-                 validation_level=None):
+
+    def __init__(self, value, highlights=None, validation_level=None):
         super(ST, self).__init__(value, 199, highlights, validation_level)
 
 
@@ -344,8 +370,8 @@ class FT(TextualDataType):
 
     :attr:`max_length` is 65536
     """
-    def __init__(self, value, highlights=None,
-                 validation_level=None):
+
+    def __init__(self, value, highlights=None, validation_level=None):
         super(FT, self).__init__(value, 65536, highlights, validation_level)
 
 
@@ -356,8 +382,8 @@ class ID(TextualDataType):
 
     :attr:`max_length` None
     """
-    def __init__(self, value, highlights=None,
-                 validation_level=None):
+
+    def __init__(self, value, highlights=None, validation_level=None):
         # max_length is None bacause it depends from the HL7 table
         super(ID, self).__init__(value, None, highlights, validation_level)
         # TODO: check for tables of allowed values: are we strict or not?
@@ -370,8 +396,8 @@ class IS(TextualDataType):
 
     :attr:`max_length` is 20
     """
-    def __init__(self, value, highlights=None,
-                 validation_level=None):
+
+    def __init__(self, value, highlights=None, validation_level=None):
         super(IS, self).__init__(value, 20, highlights, validation_level)
         # TODO: check for tables of allowed values (also defined on site): are we strict or not?
 
@@ -383,8 +409,8 @@ class TX(TextualDataType):
 
     :attr:`max_length` is 65536
     """
-    def __init__(self, value, highlights=None,
-                 validation_level=None):
+
+    def __init__(self, value, highlights=None, validation_level=None):
         super(TX, self).__init__(value, 65536, highlights, validation_level)
 
 
@@ -395,8 +421,8 @@ class GTS(TextualDataType):
 
     :attr:`max_length` is 199
     """
-    def __init__(self, value, highlights=None,
-                 validation_level=None):
+
+    def __init__(self, value, highlights=None, validation_level=None):
         super(GTS, self).__init__(value, 199, highlights, validation_level)
 
 
@@ -412,12 +438,11 @@ class NM(NumericDataType):
     :raise: :exc:`ValueError` raised when the value is not of one of the correct type
     """
 
-    def __init__(self, value=None,
-                 validation_level=None):
+    def __init__(self, value=None, validation_level=None):
         if value is not None and isinstance(value, numbers.Real):
             value = Decimal(value)
         elif value is not None and not isinstance(value, Decimal):
-            raise ValueError('Invalid value for a NM data')
+            raise ValueError("Invalid value for a NM data")
         super(NM, self).__init__(value, 16, validation_level)
 
 
@@ -431,10 +456,10 @@ class SI(NumericDataType):
 
     :raise: :exc:`ValueError` raised when the value is not of one of the correct type
     """
-    def __init__(self, value=None,
-                 validation_level=None):
+
+    def __init__(self, value=None, validation_level=None):
         if value is not None and not isinstance(value, numbers.Integral):
-            raise ValueError('Invalid value for a SI data')
+            raise ValueError("Invalid value for a SI data")
 
         super(SI, self).__init__(value, 4, validation_level)
 
@@ -450,10 +475,11 @@ class TN(TextualDataType):
 
     :raise: :exc:`ValueError` raised when the value does not match the expected format
     """
+
     def __init__(self, value, validation_level=None):
 
-        regexp = r'(\d\d\s)?(\(\d+\))?(\d+-?\d+)(X\d+)?(B\d+)?(C.+)?'
+        regexp = r"(\d\d\s)?(\(\d+\))?(\d+-?\d+)(X\d+)?(B\d+)?(C.+)?"
         if not re.match(regexp, value):
-            raise ValueError('Invalid value for TN data')
+            raise ValueError("Invalid value for TN data")
 
         super(TN, self).__init__(value, 199, None, validation_level)

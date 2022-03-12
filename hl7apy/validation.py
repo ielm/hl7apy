@@ -66,16 +66,17 @@ class Validator(object):
         from hl7apy.core import is_base_datatype
 
         def _check_z_element(el, errs, warns):
-            if el.classname == 'Field':
-                if is_base_datatype(el.datatype, el.version) or \
-                        el.datatype == 'varies':
+            if el.classname == "Field":
+                if is_base_datatype(el.datatype, el.version) or el.datatype == "varies":
                     return True
                 elif el.datatype is not None:
                     # if the datatype the is a complex datatype, the z element must follow the correct
                     # structure of that datatype
                     # Component just to search in the datatypes....
-                    dt_struct = load_reference(el.datatype, 'Datatypes_Structs', el.version)
-                    ref = ('sequence', dt_struct, el.datatype, None, None, -1)
+                    dt_struct = load_reference(
+                        el.datatype, "Datatypes_Structs", el.version
+                    )
+                    ref = ("sequence", dt_struct, el.datatype, None, None, -1)
                     _check_known_element(el, ref, errs, warns)
             for c in el.children:
                 _is_valid(c, None, errs, warns)
@@ -86,39 +87,64 @@ class Validator(object):
             min_repetitions, max_repetitions = cardinality
             if max_repetitions != -1:
                 if children_num < min_repetitions:
-                    errs.append(ValidationError("Missing required child {}.{}".format(el.name, child_name)))
+                    errs.append(
+                        ValidationError(
+                            "Missing required child {}.{}".format(el.name, child_name)
+                        )
+                    )
                 elif children_num > max_repetitions:
-                    errs.append(ValidationError("Child limit exceeded {}.{}".format(el.name, child_name)))
+                    errs.append(
+                        ValidationError(
+                            "Child limit exceeded {}.{}".format(el.name, child_name)
+                        )
+                    )
             else:
                 if children_num < min_repetitions:
-                    errs.append(ValidationError("Missing required child {}.{}".format(el.name,
-                                                                                      child_name)))
+                    errs.append(
+                        ValidationError(
+                            "Missing required child {}.{}".format(el.name, child_name)
+                        )
+                    )
 
         def _check_table_compliance(el, ref, warns):
             table = ref[4]
             if table is not None:
                 try:
-                    table_ref = load_reference(table, 'Table', el.version)
+                    table_ref = load_reference(table, "Table", el.version)
                 except ChildNotFound:
                     pass
                 else:
                     table_children = table_ref[1]
                     if el.to_er7() not in table_children:
-                        warns.append(ValidationWarning("Value {} not in table {} in element {}.{}".
-                                                       format(el.to_er7(), table, el.parent.name,
-                                                              el.name)))
+                        warns.append(
+                            ValidationWarning(
+                                "Value {} not in table {} in element {}.{}".format(
+                                    el.to_er7(), table, el.parent.name, el.name
+                                )
+                            )
+                        )
 
         def _check_length(el, ref, warns):
             max_length = ref[5]
             if -1 < max_length < len(el.to_er7()):
-                warns.append(ValidationWarning("Exceeded max length ({}) of {}.{}".
-                                               format(max_length, el.parent.name, el.name)))
+                warns.append(
+                    ValidationWarning(
+                        "Exceeded max length ({}) of {}.{}".format(
+                            max_length, el.parent.name, el.name
+                        )
+                    )
+                )
 
         def _check_datatype(el, ref, errs):
             ref_datatype = ref[2]
             if el.datatype != ref_datatype:
-                errs.append(ValidationError("Datatype {} is not correct for {}.{} (it must be {})".
-                                            format(el.datatype, el.parent.name, el.name, ref[1])))
+                errs.append(
+                    ValidationError(
+                        "Datatype {} is not correct for {}.{} (it must be {})".format(
+                            el.datatype, el.parent.name, el.name, ref[1]
+                        )
+                    )
+                )
 
         def _get_valid_children_info(ref):
             valid_children = {c[0] for c in ref[1]}
@@ -136,14 +162,19 @@ class Validator(object):
                 except ChildNotFound:
                     errs.append(ValidationError("Invalid element found: {}".format(el)))
 
-            if ref[0] in ('sequence', 'choice'):
+            if ref[0] in ("sequence", "choice"):
                 element_children = {c.name for c in el.children if not c.is_z_element()}
                 valid_children, valid_children_refs = _get_valid_children_info(ref)
 
                 # check that the children are all allowed children
                 if not element_children <= valid_children:
-                    errs.append(ValidationError("Invalid children detected for {}: {}".
-                                                format(el, list(element_children - valid_children))))
+                    errs.append(
+                        ValidationError(
+                            "Invalid children detected for {}: {}".format(
+                                el, list(element_children - valid_children)
+                            )
+                        )
+                    )
 
                 # iterates the valid children
                 for child_ref in valid_children_refs:
@@ -171,19 +202,26 @@ class Validator(object):
 
                 _check_length(el, ref, warns)
 
-                if el.datatype == 'varies':  # TODO: it should check the real rule
+                if el.datatype == "varies":  # TODO: it should check the real rule
                     return True
                 _check_datatype(el, ref, errs)
 
                 # For complex datatypes element, the reference is the one of the datatype
-                if not is_base_datatype(el.datatype, el.version) and el.datatype is not None:
+                if (
+                    not is_base_datatype(el.datatype, el.version)
+                    and el.datatype is not None
+                ):
                     # Component just to search in the datatypes....
-                    ref = load_reference(el.datatype, 'Datatypes_Structs', el.version)
+                    ref = load_reference(el.datatype, "Datatypes_Structs", el.version)
                     _is_valid(el, ref, errs, warns)
 
         def _is_valid(el, ref, errs, warns):
             if el.is_unknown():
-                errs.append(ValidationError("Unknown element found: {}.{}".format(el.parent, el)))
+                errs.append(
+                    ValidationError(
+                        "Unknown element found: {}.{}".format(el.parent, el)
+                    )
+                )
                 return
 
             if el.is_z_element():

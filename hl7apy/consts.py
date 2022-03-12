@@ -30,25 +30,25 @@ N_SEPS_27 = 5
 
 #: Dictionary with default encoding characters as per standard specifications
 DEFAULT_ENCODING_CHARS = {
-    'GROUP': '\r',
-    'SEGMENT': '\r',
-    'FIELD':  '|',
-    'COMPONENT': '^',
-    'SUBCOMPONENT': '&',
-    'REPETITION': '~',
-    'ESCAPE': '\\'
+    "GROUP": "\r",
+    "SEGMENT": "\r",
+    "FIELD": "|",
+    "COMPONENT": "^",
+    "SUBCOMPONENT": "&",
+    "REPETITION": "~",
+    "ESCAPE": "\\",
 }
 
 #: Dictionary with default encoding characters for version superior to 2.7
 DEFAULT_ENCODING_CHARS_27 = {
-    'GROUP': '\r',
-    'SEGMENT': '\r',
-    'FIELD':  '|',
-    'COMPONENT': '^',
-    'SUBCOMPONENT': '&',
-    'REPETITION': '~',
-    'ESCAPE': '\\',
-    'TRUNCATION': '#'
+    "GROUP": "\r",
+    "SEGMENT": "\r",
+    "FIELD": "|",
+    "COMPONENT": "^",
+    "SUBCOMPONENT": "&",
+    "REPETITION": "~",
+    "ESCAPE": "\\",
+    "TRUNCATION": "#",
 }
 
 #: default hl7 version
@@ -59,18 +59,20 @@ class MLLP_ENCODING_CHARS(object):
     """
     MLLP encoding chars
     """
+
     #: Start Block
-    SB = '\x0b'
+    SB = "\x0b"
     #: End Block
-    EB = '\x1c'
+    EB = "\x1c"
     #: Carriage return
-    CR = '\x0d'
+    CR = "\x0d"
 
 
 class VALIDATION_LEVEL(object):
     """
     Allowed validation levels
     """
+
     #: Strict validation
     STRICT = 1
     #: Tolerant validation

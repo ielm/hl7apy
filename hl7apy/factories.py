@@ -80,21 +80,23 @@ def datatype_factory(datatype, value, version=None, validation_level=None):
 
     factories = base_datatypes.copy()
 
-    if 'DT' in factories:
-        factories['DT'] = date_factory
-    if 'TM' in factories:
-        factories['TM'] = timestamp_factory
-    if 'DTM' in factories:
-        factories['DTM'] = datetime_factory
-    if 'NM' in factories:
-        factories['NM'] = numeric_factory
-    if 'SI' in factories:
-        factories['SI'] = sequence_id_factory
+    if "DT" in factories:
+        factories["DT"] = date_factory
+    if "TM" in factories:
+        factories["TM"] = timestamp_factory
+    if "DTM" in factories:
+        factories["DTM"] = datetime_factory
+    if "NM" in factories:
+        factories["NM"] = numeric_factory
+    if "SI" in factories:
+        factories["SI"] = sequence_id_factory
 
     try:
         factory = factories[datatype]
         if isinstance(factory, FunctionType):
-            return factory(value, base_datatypes[datatype], validation_level=validation_level)
+            return factory(
+                value, base_datatypes[datatype], validation_level=validation_level
+            )
         return factory(value, validation_level=validation_level)
     except KeyError:
         raise InvalidDataType(datatype)
@@ -102,7 +104,7 @@ def datatype_factory(datatype, value, version=None, validation_level=None):
         if Validator.is_strict(validation_level):
             raise e
         # TODO: Do we really want this? In that case the parent's datatype must be changed accordingly
-        return factories['ST'](value)
+        return factories["ST"](value)
 
 
 def date_factory(value, datatype_cls, validation_level=None):
@@ -298,7 +300,7 @@ def numeric_factory(value, datatype_cls, validation_level=None):
     try:
         return datatype_cls(Decimal(value), validation_level=validation_level)
     except InvalidOperation:
-        raise ValueError('{0} is not an HL7 valid NM value'.format(value))
+        raise ValueError("{0} is not an HL7 valid NM value".format(value))
 
 
 def sequence_id_factory(value, datatype_cls, validation_level=None):
@@ -328,9 +330,10 @@ def sequence_id_factory(value, datatype_cls, validation_level=None):
     try:
         return datatype_cls(int(value), validation_level=validation_level)
     except ValueError:
-        raise ValueError('{0} is not an HL7 valid SI value'.format(value))
+        raise ValueError("{0} is not an HL7 valid SI value".format(value))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

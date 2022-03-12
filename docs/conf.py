@@ -20,9 +20,11 @@
 
 from __future__ import absolute_import
 import sys
-sys.path.append('..')
+
+sys.path.append("..")
 
 import datetime
+
 FIRST_RELEASE_YEAR = 2012
 CURRENT_YEAR = datetime.datetime.now().year
 
@@ -34,24 +36,26 @@ CURRENT_YEAR = datetime.datetime.now().year
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc']
+extensions = ["sphinx.ext.autodoc"]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'HL7apy'
-copyright = u'%s-%s, CRS4 - Center for Advanced Studies, Research and Development in Sardinia' % \
-            (FIRST_RELEASE_YEAR, CURRENT_YEAR)
+project = "HL7apy"
+copyright = (
+    "%s-%s, CRS4 - Center for Advanced Studies, Research and Development in Sardinia"
+    % (FIRST_RELEASE_YEAR, CURRENT_YEAR)
+)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -78,7 +82,7 @@ release = version_string
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ["_build"]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -95,7 +99,7 @@ exclude_patterns = ['_build']
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -106,7 +110,9 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = "sphinx_rtd_theme"
-html_theme_path = ["_themes", ]
+html_theme_path = [
+    "_themes",
+]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -146,9 +152,7 @@ html_static_path = ["_static/pycharm_logo.png"]
 # html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-html_sidebars = {
-    '**': ['globaltoc.html', 'relations.html']
-}
+html_sidebars = {"**": ["globaltoc.html", "relations.html"]}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -181,7 +185,7 @@ html_sidebars = {
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'HL7apydoc'
+htmlhelp_basename = "HL7apydoc"
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -189,10 +193,8 @@ htmlhelp_basename = 'HL7apydoc'
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
 }
@@ -200,8 +202,13 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'HL7apy.tex', u'HL7apy Documentation',
-     u'CRS4 - Center for Advanced Studies, Research and Development in Sardinia', 'manual'),
+    (
+        "index",
+        "HL7apy.tex",
+        "HL7apy Documentation",
+        "CRS4 - Center for Advanced Studies, Research and Development in Sardinia",
+        "manual",
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -230,8 +237,13 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'hl7apy', u'HL7apy Documentation',
-     [u'CRS4 - Center for Advanced Studies, Research and Development in Sardinia'], 1)
+    (
+        "index",
+        "hl7apy",
+        "HL7apy Documentation",
+        ["CRS4 - Center for Advanced Studies, Research and Development in Sardinia"],
+        1,
+    )
 ]
 
 # If true, show URL addresses after external links.
@@ -244,10 +256,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'HL7apy', u'HL7apy Documentation',
-     u'CRS4 - Center for Advanced Studies, Research and Development in Sardinia', 'HL7apy',
-     'One line description of project.',
-     'Miscellaneous'),
+    (
+        "index",
+        "HL7apy",
+        "HL7apy Documentation",
+        "CRS4 - Center for Advanced Studies, Research and Development in Sardinia",
+        "HL7apy",
+        "One line description of project.",
+        "Miscellaneous",
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.

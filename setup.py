@@ -27,7 +27,9 @@ from setuptools import setup
 
 import hl7apy
 
-desc = "HL7apy: a lightweight Python library to parse, create and handle HL7 v2.x messages"
+desc = (
+    "HL7apy: a lightweight Python library to parse, create and handle HL7 v2.x messages"
+)
 
 long_desc = """
 HL7apy: a lightweight Python library to parse, create and handle HL7 v2.x messages
@@ -47,39 +49,52 @@ The main features includes:
 
 
 def _get_version():
-    with open('VERSION') as f:
+    with open("VERSION") as f:
         return f.read().strip()
 
 
 setup(
-    name='hl7apy',
+    name="hl7apy",
     version=_get_version(),
     author=hl7apy.__author__,
     author_email=hl7apy.__author_email__,
     description=desc,
     long_description=long_desc,
     url=hl7apy.__url__,
-    download_url='http://sourceforge.net/projects/hl7apy/files/',
-    license='MIT License',
-    keywords=['HL7', 'Health Level 7', 'healthcare', 'python'],
+    download_url="http://sourceforge.net/projects/hl7apy/files/",
+    license="MIT License",
+    keywords=["HL7", "Health Level 7", "healthcare", "python"],
     classifiers=[
-        'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
-        'Intended Audience :: Healthcare Industry',
-        'Topic :: Scientific/Engineering',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Intended Audience :: Healthcare Industry",
+        "Topic :: Scientific/Engineering",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
-    packages=['hl7apy', 'hl7apy.v2_1', 'hl7apy.v2_2', 'hl7apy.v2_3', 'hl7apy.v2_3_1', 'hl7apy.v2_4', 'hl7apy.v2_5',
-              'hl7apy.v2_5_1', 'hl7apy.v2_6', 'hl7apy.v2_7', 'hl7apy.v2_8', 'hl7apy.v2_8_1', 'hl7apy.v2_8_2'],
-    scripts=['utils/hl7apy_profile_parser'],
-    test_suite='tests',
+    packages=[
+        "hl7apy",
+        "hl7apy.v2_1",
+        "hl7apy.v2_2",
+        "hl7apy.v2_3",
+        "hl7apy.v2_3_1",
+        "hl7apy.v2_4",
+        "hl7apy.v2_5",
+        "hl7apy.v2_5_1",
+        "hl7apy.v2_6",
+        "hl7apy.v2_7",
+        "hl7apy.v2_8",
+        "hl7apy.v2_8_1",
+        "hl7apy.v2_8_2",
+    ],
+    scripts=["utils/hl7apy_profile_parser"],
+    test_suite="tests",
 )
